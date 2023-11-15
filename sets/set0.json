@@ -1,0 +1,21 @@
+{
+    "name":"Gloser s.20",
+    "author":"wryhode",
+    "languages":["fr","no"],
+    "useTimer":true,
+    "defaultTimer":10,
+    "swapped":"random",
+    "exactMatch":false,
+    "phrases":{
+        "avoir":{
+            "translation":["å ha","ha"],
+            "timer":4
+        },
+        "j'ai":{
+            "translation":["jeg har"]
+        },
+        "tu as":{
+            "translation":["du har"]
+        }
+    }
+}
