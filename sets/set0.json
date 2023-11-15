@@ -1,5 +1,5 @@
 {
-    "name":"Gloser s.20",
+    "name":"Avoir",
     "author":"wryhode",
     "languages":["fr","no"],
     "useTimer":true,
@@ -8,14 +8,26 @@
     "exactMatch":false,
     "phrases":{
         "avoir":{
-            "translation":["å ha","ha"],
-            "timer":4
+            "translation":["å ha","ha"]
         },
         "j'ai":{
             "translation":["jeg har"]
         },
         "tu as":{
             "translation":["du har"]
+        },
+        "il / elle / on a":{
+            "translation":["han har","hun har"]
+        },
+        "nous avons":{
+            "translation":["vi har"]
+        },
+        "vous avez":{
+            "translation":["dere har"]
+        },
+        "ils / elles ont":{
+            "translation":["de har"]
         }
+
     }
 }

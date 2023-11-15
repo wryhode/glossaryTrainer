@@ -85,7 +85,7 @@ class App():
             return self.currentSet.activePhrase
         else:
             return "No set is active"
-    
+
     def setActivePhraseRandomChoice(self):
         self.currentSet.setActivePhrase(choice(list(self.currentSet.phrases.keys())))
         self.updateUIonSetChange()
@@ -101,7 +101,8 @@ class App():
         self.setActivePhraseRandomChoice()
 
     def onWrongAnswer(self):
-        self.gameActive = False
+        pass
+        #self.gameActive = False
 
     def onAnswerSubmit(self,answer):
         correct = self.currentSet.checkAnswer(answer)
