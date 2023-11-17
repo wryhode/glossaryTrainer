@@ -59,10 +59,15 @@ class App():
         self.score = 0
         self.combo = 0
 
-        self.gameActive = True
-        self.popupActive = False
+        self.gameActive = False
+        self.popupActive = True
         self.popupTimer = 0
         self.popupDuration = 10
+        self.popupTitle = ""
+        self.popupContent = ""
+
+        self.maxRenderTime = 0
+        self.averageRT = 0
 
         self.refocusAnswerField = False
 
@@ -118,6 +123,25 @@ class App():
         self.refocusAnswerField = True
         self.updateUIscore()
         self.newPhrase()
+
+    def newPopup(self,title,content,pauseGame):
+        if pauseGame:
+            self.gameActive = False
+
+        self.popupActive = True
+
+        self.popupTitle = title
+        self.popupContent = content
+        self.updateUIpopup()
+
+    def updateUIpopup(self):
+        self.popup.header.canvas.fill([16,16,16])
+        libUI.pygame.draw.rect(self.popup.header.canvas,[128,128,128],[[0,0],self.popup.header.rect.size],1)
+        self.fontRegular.render(self.popupTitle,self.popup.header.canvas,[self.popup.header.rect.width/2,0],alignX=True)
+
+        self.popup.contentArea.canvas.fill([48,48,48])
+        libUI.pygame.draw.rect(self.popup.contentArea.canvas,[128,128,128],[[0,0],self.popup.contentArea.rect.size],1)
+        self.fontRegular.renderClipArea(self.popupContent,self.popup.contentArea.canvas,[0,0],self.popup.contentArea.rect.width)
 
     def updateUIonSetChange(self):
         self.mainSection.bar.canvas.fill([48,48,48])
@@ -196,20 +220,32 @@ class App():
 
         popupSize = self.app.utils.fracDomain([0.5,0.5],self.app.window.resolution)
         popupPosition = [(self.app.window.resolution[0] / 2) - (popupSize[0] / 2),(self.app.window.resolution[1] / 2) - (popupSize[1] / 2)]
+        popupHeaderSize = self.app.utils.fracDomain([1,0.1],popupSize)
+        popupContentSize = [popupSize[0],popupSize[1]-popupHeaderSize[1]]
+        popupContentPosition = [0,popupHeaderSize[1]]
 
         self.popup = self.app.ElementCollection()
         self.popup.canvas = self.app.Canvas(popupSize,popupPosition,self.canvas)
+        self.popup.header = self.app.Canvas(popupHeaderSize,[0,0],self.popup.canvas)
+        self.popup.contentArea = self.app.Canvas(popupContentSize,popupContentPosition,self.popup.canvas)
 
         self.popupLayer.addElementCollection(self.popup)
         self.popupUpdateLayer.addCloneFromLayer(self.popupLayer)
 
         self.updateUIonSetChange()
         self.updateUIscore()
+        self.updateUIpopup()
 
     def run(self):
-        self.newPhrase()
+        #self.newPhrase()
+        self.newPopup("Title","Content",True)
+        frame = 1
         while self.app.update():
-            self.mainUpdate.update(self.app)
+            if self.popupActive:
+                self.popupUpdateLayer.update(self.app)
+            else:
+                self.mainUpdate.update(self.app)
+            
             self.canvas.clear([33,33,33])
 
             self.mainSection.timeBar.canvas.fill([48,48,48])
@@ -229,8 +265,12 @@ class App():
             if self.popupActive:
                 self.popupLayer.draw()
             self.canvas.draw()
-            self.fontSmall.render(round(self.app.clock.get_time(),2),self.app.window.canvas,[0,0],[0,255,0])
+            renderTime = self.app.clock.get_time()
+            if renderTime > self.maxRenderTime: self.maxRenderTime = renderTime
+            self.averageRT += renderTime
+            self.fontSmall.render(f"{renderTime} / {self.maxRenderTime} / {round(self.averageRT / frame,3)}",self.app.window.canvas,[0,0],[0,255,0])
             self.app.draw()
+            frame += 1
             self.timer += self.app.dt * self.gameActive
 
 if __name__ == "__main__":

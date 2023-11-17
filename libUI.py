@@ -214,6 +214,18 @@ class Application():
 
             surface.blit(self.font.render(str(text),True,color),position)
 
+            return size
+        
+        def renderClipArea(self,text,surface,position,clipX,color=[255,255,255]):
+            pos = position
+            posDef = list(position)
+            for c in str(text):
+                inc = self.render(c,surface,pos,color,False,False)
+                pos[0] += inc[0]
+                if pos[0] > clipX:
+                    pos[0] = posDef[0]
+                    pos[1] += inc[1]
+
     class Text():
         def __init__(self,font,text,color,position,parent):
             self.font = font
@@ -286,6 +298,12 @@ class Application():
             if len(self.input) > 0:
                 self.input.pop(self.cursor)
             self.updateInputText()
+
+        def endCursor(self):
+            self.cursor = len(self.input)
+
+        def homeCursor(self):
+            self.cursor = 0
 
         def update(self, mouse, keyboard):
             super().update(mouse)
@@ -626,6 +644,12 @@ class Application():
                     
                     elif e.key == pygame.K_BACKSPACE:
                         self.keyboard.textInputObject.deleteCharacter()
+
+                    elif e.key == pygame.K_HOME:
+                        self.keyboard.textInputObject.homeCursor()
+
+                    elif e.key == pygame.K_END:
+                        self.keyboard.textInputObject.endCursor()
 
                 self.keyboard.down.append(e.key)
 
